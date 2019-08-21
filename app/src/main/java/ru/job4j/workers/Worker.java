@@ -3,23 +3,23 @@ package ru.job4j.workers;
 import java.util.Objects;
 
 public class Worker {
-    private static int id = 0;
+    private int id;
     private String firstName;
     private String lastName;
     private String birthDate;
     private int photo;
     private Speciality speciality;
 
-    public Worker(String firstName, String lastName, String birthDate, int photo, Speciality speciality) {
+    public Worker(int id, String firstName, String lastName, String birthDate, int photo, Speciality speciality) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
         this.photo = photo;
         this.speciality = speciality;
-        id++;
     }
 
-    public static int getId() {
+    public int getId() {
         return id;
     }
 

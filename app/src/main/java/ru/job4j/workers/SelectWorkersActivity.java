@@ -1,6 +1,8 @@
 package ru.job4j.workers;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,28 +14,51 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SelectWorkersActivity extends Fragment {
-    private List<Worker> workers = new ArrayList<>();
+    private List<Worker> workers = new ArrayList<>();//используем нестатическую коллекцию, которая будет каждый раз создаваться при создании класса
+    // и будет подгружать записи из базы данных по айди специальности
     private RecyclerView recycler;
+    SQLiteDatabase db;
     private OnWorkerSelectClickListener callback;
     private boolean isBlue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_select_workers, container, false);
+        this.db = new WorkersBaseHelper(this.getContext()).getReadableDatabase();
         recycler = view.findViewById(R.id.recyclerViewWorkers);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         if (getArguments() != null) {
             int selectedID = getArguments().getInt(MainActivity.SPECIALITY);
-            Speciality selectedSpeciality = MainActivity.specialityList.get(selectedID);
-            for (Worker worker : MainActivity.workerList) {
-                if (worker.getSpeciality() == selectedSpeciality) {
-                    this.workers.add(worker);
+            String selection = DbSchema.WorkersTable.Cols.SPECIALITY_ID + "=?";
+            String[] selectionArgs = {"" + selectedID};
+            Cursor cursor = this.db.query(
+                    DbSchema.WorkersTable.NAME,//делаем выборку из таблицы воркерс, чтобы specialityId было равно выбранной специальности
+                    null, selection, selectionArgs,
+                    null, null, null
+            );
+            Speciality selectedSpeciality = null; //находим в коллекции выбранную специальность, чтобы подставить ее в воркера
+            for (Speciality speciality : MainActivity.specialityList) {
+                if (speciality.getId() == selectedID) {
+                    selectedSpeciality = speciality;
+                    break;
                 }
             }
+            while (cursor.moveToNext()) {
+                workers.add(new Worker(
+                        cursor.getInt(cursor.getColumnIndex("id")),
+                        cursor.getString(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.FIRST_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.LAST_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.BIRTH_DATE)),
+                        cursor.getInt(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.PHOTO)),
+                        selectedSpeciality
+                ));
+            }
+            cursor.close();
         }
         this.recycler.setAdapter(new WorkersAdapter(getContext(), workers));
         return view;
@@ -106,14 +131,14 @@ public class SelectWorkersActivity extends Fragment {
             @Override
             public void onClick(View v) {
                 Worker worker = workers.get(getAdapterPosition());
-                int result = MainActivity.workerList.indexOf(worker);
-                callback.onWorkerClicked(result);
+                int result = workers.get(getAdapterPosition()).getId();
+                callback.onWorkerClicked(result, worker.getSpeciality().getId());
                 notifyDataSetChanged();
             }
         }
     }
 
     public interface OnWorkerSelectClickListener {
-        void onWorkerClicked(int i);
+        void onWorkerClicked(int vorkerId, int specialityId);
     }
 }

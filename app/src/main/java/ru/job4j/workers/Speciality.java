@@ -3,12 +3,16 @@ package ru.job4j.workers;
 import java.util.Objects;
 
 public class Speciality {
+    private int id;
     private String name;
-    private static int id = 0;
+
+    public Speciality(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Speciality(String name) {
         this.name = name;
-        id++;
     }
 
     public String getName() {
@@ -19,8 +23,12 @@ public class Speciality {
         this.name = name;
     }
 
-    public static int getId() {
+    public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

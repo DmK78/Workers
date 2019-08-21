@@ -1,6 +1,8 @@
 package ru.job4j.workers;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,12 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectSpecialityActivity extends Fragment {
     private RecyclerView recycler;
+    private SQLiteDatabase db;
     private OnSpecialitySelectClickListener callback;
 
     @Override
@@ -45,6 +48,7 @@ public class SelectSpecialityActivity extends Fragment {
             this.inflater = LayoutInflater.from(context);
             this.specialities = MainActivity.specialityList;
         }
+
         @NonNull
         @Override
         public SpecialitiesHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -74,7 +78,7 @@ public class SelectSpecialityActivity extends Fragment {
 
             @Override
             public void onClick(View v) {
-                callback.onSpecialityClicked(getAdapterPosition());
+                callback.onSpecialityClicked(specialities.get(getAdapterPosition()).getId());
                 notifyDataSetChanged();
             }
         }
@@ -83,4 +87,5 @@ public class SelectSpecialityActivity extends Fragment {
     public interface OnSpecialitySelectClickListener {
         void onSpecialityClicked(int i);
     }
+
 }
