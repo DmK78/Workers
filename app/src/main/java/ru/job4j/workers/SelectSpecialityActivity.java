@@ -18,15 +18,17 @@ import java.util.List;
 
 public class SelectSpecialityActivity extends Fragment {
     private RecyclerView recycler;
-    private SQLiteDatabase db;
     private OnSpecialitySelectClickListener callback;
+    private WorkersCore workersCore = WorkersCore.getInstance();
+    List<Speciality> specialityList = workersCore.getAllSpecialities();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_select_speciality, container, false);
         recycler = view.findViewById(R.id.recyclerViewSpecialities);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        this.recycler.setAdapter(new SpecialitiesAdapter(getContext(), MainActivity.specialityList));
+
+        this.recycler.setAdapter(new SpecialitiesAdapter(getContext(), specialityList));
         return view;
     }
 
@@ -44,9 +46,10 @@ public class SelectSpecialityActivity extends Fragment {
     public class SpecialitiesAdapter extends RecyclerView.Adapter<SpecialitiesAdapter.SpecialitiesHolder> {
         private List<Speciality> specialities;
         private LayoutInflater inflater;
+
         SpecialitiesAdapter(Context context, List<Speciality> specialities) {
             this.inflater = LayoutInflater.from(context);
-            this.specialities = MainActivity.specialityList;
+            this.specialities = specialityList;
         }
 
         @NonNull
