@@ -104,7 +104,7 @@ public class SelectWorkersActivity extends Fragment {
 
             @Override
             public void onClick(View v) {
-                workersCore.setSelectedWorker(workers.get(getAdapterPosition()));
+                //workersCore.setSelectedWorker(workers.get(getAdapterPosition()));
                 callback.onWorkerClicked();
                 notifyDataSetChanged();
             }
