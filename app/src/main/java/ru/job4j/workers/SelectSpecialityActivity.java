@@ -1,6 +1,7 @@
 package ru.job4j.workers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
@@ -17,9 +18,14 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,10 +50,23 @@ public class SelectSpecialityActivity extends Fragment {
                 null, null, null
         );
         if (!cursor.moveToFirst()) { //проверяем, пустая ли таблица.
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient.Builder client = new OkHttpClient.Builder();
+            if(BuildConfig.DEBUG){
+                interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            } else {
+                interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            }
+            client.addInterceptor(interceptor);
+
+
+
             Gson gson = new GsonBuilder().setLenient().create();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://github.com/test-tasks/task-json/blob/master/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
+                    .client(client.build())
                     .build();
             JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
             Call<List<Worker>> call = jsonPlaceHolderApi.getWorkers();
