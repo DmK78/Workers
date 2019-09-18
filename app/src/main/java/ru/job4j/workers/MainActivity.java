@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements SelectSpecialityA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        workersCore.init(getApplicationContext());
+        //workersCore.init(getApplicationContext());
+
         fm = getSupportFragmentManager(); // получить FragmentManager
         selectSpecialityFragment = fm.findFragmentById(R.id.fragment_container);
         if (selectSpecialityFragment == null) {

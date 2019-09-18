@@ -35,7 +35,6 @@ public class WorkerInfoActivity extends Fragment {
         textViewFirstName.setText(worker.getFirstName());
         textViewLastName.setText(worker.getLastName());
         textViewBirthDate.setText(worker.getBirthDate());
-        textViewSpeciality.setText(worker.getSpeciality().getName());
         imageViewPhoto.setImageResource(worker.getPhoto());
         return view;
     }

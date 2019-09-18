@@ -1,22 +1,31 @@
 package ru.job4j.workers;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Worker {
     private int id;
+    @SerializedName("f_name")
     private String firstName;
+    @SerializedName("l_name")
     private String lastName;
+    @SerializedName("birthday")
     private String birthDate;
+    @SerializedName("avatr_url")
     private int photo;
-    private Speciality speciality;
+    @SerializedName("specialty")
+    private ArrayList<Speciality> specialities;
 
-    public Worker(int id, String firstName, String lastName, String birthDate, int photo, Speciality speciality) {
+    public Worker(int id, String firstName, String lastName, String birthDate, int photo, ArrayList<Speciality> specialities) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
         this.photo = photo;
-        this.speciality = speciality;
+        this.specialities = specialities;
     }
 
     public int getId() {
@@ -27,55 +36,33 @@ public class Worker {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
-
     public int getPhoto() {
         return photo;
     }
 
-    public void setPhoto(int photo) {
-        this.photo = photo;
+    public ArrayList<Speciality> getSpecialities() {
+        return specialities;
     }
 
-    public Speciality getSpeciality() {
-        return speciality;
-    }
+    public class Speciality {
+        @SerializedName("specialty_id")
+        private int id;
+        private String name;
 
-    public void setSpeciality(Speciality speciality) {
-        this.speciality = speciality;
-    }
+        public int getId() {
+            return id;
+        }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Worker worker = (Worker) o;
-        return photo == worker.photo &&
-                Objects.equals(firstName, worker.firstName) &&
-                Objects.equals(lastName, worker.lastName) &&
-                Objects.equals(birthDate, worker.birthDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName, birthDate, photo);
+        public String getName() {
+            return name;
+        }
     }
 }

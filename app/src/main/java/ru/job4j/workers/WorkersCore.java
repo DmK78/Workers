@@ -2,19 +2,35 @@ package ru.job4j.workers;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.provider.Telephony.TextBasedSmsColumns.ERROR_CODE;
+
 public class WorkersCore {
 
     private static WorkersCore instance;
-    private List<Speciality> specialityList = new ArrayList<>();
+    //private List<Speciality> specialityList = new ArrayList<>();
     private Worker selectedWorker;
     private SQLiteDatabase db;
 
@@ -38,7 +54,43 @@ public class WorkersCore {
                 null, null, null
         );
         if (!cursor.moveToFirst()) { //проверяем, пустая ли таблица.
-            specialityList.add(new Speciality("Medic"));// если таблица пустая, то заполняем ее
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://github.com/test-tasks/task-json/blob/master/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+            Call<List<Worker>> call = jsonPlaceHolderApi.getWorkers();
+            call.enqueue(new Callback<List<Worker>>() {
+                @Override
+                public void onResponse(Call<List<Worker>> call, Response<List<Worker>> response) {
+                    if (response.isSuccessful()) {
+                        Log.i("workk",""+response.code());
+                        List<Worker> workers = response.body();
+                    }
+                }
+                @Override
+                public void onFailure(Call<List<Worker>> call, Throwable t) {
+                    Log.i("workk",""+t.getMessage());
+
+                }
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*specialityList.add(new Speciality("Medic"));// если таблица пустая, то заполняем ее
             specialityList.add(new Speciality("Developer"));
             specialityList.add(new Speciality("Teacher"));
             specialityList.add(new Speciality("Trader"));
@@ -69,21 +121,22 @@ public class WorkersCore {
                 value.put(DbSchema.WorkersTable.Cols.PHOTO, image);
                 value.put(DbSchema.WorkersTable.Cols.SPECIALITY_ID, specialityId);
                 db.insert(DbSchema.WorkersTable.NAME, null, value);
-            }
+                }*/
+
         } else { //иначе загружаем данные из базы данных в коллекцию
-            while (!cursor.isAfterLast()) {
+          /*  while (!cursor.isAfterLast()) {
                 specialityList.add(new Speciality(
                         cursor.getInt(cursor.getColumnIndex("id")),
                         cursor.getString(cursor.getColumnIndex(DbSchema.SpecialitiesTable.Cols.NAME))));
                 cursor.moveToNext();
-            }
+            }*/
         }
         cursor.close();
     }
 
-    public List<Speciality> getAllSpecialities() {
+    /*public List<Speciality> getAllSpecialities() {
         return specialityList;
-    }
+    }*/
 
     public List<Worker> findWorkersFromSpeciality(Context context, int selectedID) {
         List<Worker> result = new ArrayList<>();
@@ -95,22 +148,22 @@ public class WorkersCore {
                 null, selection, selectionArgs,
                 null, null, null
         );
-        Speciality selectedSpeciality = null; //находим в коллекции выбранную специальность, чтобы подставить ее в воркера
+     /*   Speciality selectedSpeciality = null; //находим в коллекции выбранную специальность, чтобы подставить ее в воркера
         for (Speciality speciality : specialityList) {
             if (speciality.getId() == selectedID) {
                 selectedSpeciality = speciality;
                 break;
             }
-        }
+        }*/
         while (cursor.moveToNext()) {
-            result.add(new Worker(
+            /*result.add(new Worker(
                     cursor.getInt(cursor.getColumnIndex("id")),
                     cursor.getString(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.FIRST_NAME)),
                     cursor.getString(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.LAST_NAME)),
                     cursor.getString(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.BIRTH_DATE)),
                     cursor.getInt(cursor.getColumnIndex(DbSchema.WorkersTable.Cols.PHOTO)),
                     selectedSpeciality
-            ));
+            ));*/
         }
         cursor.close();
         return result;

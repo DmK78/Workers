@@ -34,7 +34,7 @@ public class SelectWorkersActivity extends Fragment {
             int selectedID = getArguments().getInt(MainActivity.SPECIALITY);
             workers = workersCore.findWorkersFromSpeciality(getContext(),selectedID);
         }
-        this.recycler.setAdapter(new WorkersAdapter(getContext(), workers));
+       // this.recycler.setAdapter(new WorkersAdapter(getContext(), workers));
         return view;
     }
 
@@ -49,7 +49,7 @@ public class SelectWorkersActivity extends Fragment {
         callback = null; // обнуляем ссылку при отсоединении фрагмента от активити
     }
 
-    public class WorkersAdapter extends RecyclerView.Adapter<WorkersAdapter.WorkersHolder> {
+   /* public class WorkersAdapter extends RecyclerView.Adapter<WorkersAdapter.WorkersHolder> {
         private List<Worker> workers;
         private LayoutInflater inflater;
 
@@ -71,7 +71,7 @@ public class SelectWorkersActivity extends Fragment {
             workersHolder.textViewFirstName.setText(worker.getFirstName());
             workersHolder.textViewLastName.setText(worker.getLastName());
             workersHolder.textViewAge.setText(worker.getBirthDate());
-            workersHolder.textViewSpeciality.setText(worker.getSpeciality().getName());
+            //workersHolder.textViewSpeciality.setText(worker.getSpeciality().getName());
             workersHolder.imageViewPhoto.setImageResource(worker.getPhoto());
             if (isBlue) {
                 workersHolder.itemView.setBackgroundColor(getResources().getColor(R.color.colorGray));
@@ -109,7 +109,7 @@ public class SelectWorkersActivity extends Fragment {
                 notifyDataSetChanged();
             }
         }
-    }
+    }*/
 
     public interface OnWorkerSelectClickListener {
         void onWorkerClicked();
