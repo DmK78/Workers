@@ -55,14 +55,14 @@ public class SelectSpecialityActivity extends Fragment {
                 @Override
                 public void onResponse(Call<List<Worker>> call, Response<List<Worker>> response) {
                     if (response.isSuccessful()) {
-                        Log.i("workk",""+response.code());
+                        Log.i("workk-success",""+response.code());
                         List<Worker> workers = response.body();
                         saveWorkersToDb(workers);
                     }
                 }
                 @Override
                 public void onFailure(Call<List<Worker>> call, Throwable t) {
-                    Log.i("workk",""+t.getMessage());
+                    Log.i("workk-error",""+t.getMessage());
 
                 }
             });
